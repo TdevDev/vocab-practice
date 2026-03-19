@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Vocab Practice — Book 2</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow-x:hidden}
+body{font-family:-apple-system,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh}
+.screen{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.5rem;max-width:620px;margin:0 auto;text-align:center}
+.screen.active{display:flex}
+.act-screen{display:none;min-height:100vh;flex-direction:column;padding:1.25rem 1.25rem 2rem;max-width:620px;margin:0 auto}
+.act-screen.active{display:flex}
+.admin-screen{display:none;min-height:100vh;flex-direction:column;padding:1.5rem 1.25rem 3rem;max-width:620px;margin:0 auto}
+.admin-screen.active{display:flex}
+.logo-circle{width:110px;height:110px;border-radius:50%;background:#fff;border:2px solid #e0e0d8;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:48px;box-shadow:0 2px 12px rgba(0,0,0,.07);cursor:pointer;user-select:none}
+.app-title{font-size:28px;font-weight:700;margin-bottom:6px}
+.app-sub{font-size:14px;color:#888;margin-bottom:2.5rem}
+.tap-start{font-size:16px;color:#1D9E75;font-weight:600;animation:pulse 1.8s infinite;cursor:pointer}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.step-badge{font-size:11px;font-weight:600;color:#aaa;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.6rem}
+.step-title{font-size:26px;font-weight:700;margin-bottom:.4rem}
+.step-sub{font-size:14px;color:#888;margin-bottom:1.75rem;line-height:1.5}
+.full-w{width:100%}
+.btn{width:100%;padding:16px;border-radius:14px;border:none;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;margin-top:10px}
+.btn-green{background:#1D9E75;color:#fff}.btn-green:hover{opacity:.88}.btn-green:disabled{opacity:.35;cursor:default}
+.btn-outline{background:#fff;border:1.5px solid #d8d8d0;color:#1a1a1a}.btn-outline:hover{background:#f5f5f0}
+.btn-amber{background:#EF9F27;color:#fff}.btn-amber:hover{opacity:.88}
+.btn-red{background:#E24B4A;color:#fff}.btn-red:hover{opacity:.88}
+.btn-sm{padding:8px 14px;border-radius:10px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.grade-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;margin-bottom:1.5rem}
+.grade-card{padding:28px 10px;border-radius:18px;border:2px solid #e0e0d8;background:#fff;font-size:18px;font-weight:700;cursor:pointer;transition:all .18s}
+.grade-card:hover:not(.locked){border-color:#1D9E75;background:#E1F5EE;color:#0F6E56}
+.grade-card.locked{opacity:.32;cursor:default}
+.grade-card .lock{font-size:13px;color:#aaa;margin-top:5px;font-weight:400}
+.class-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;margin-bottom:1.5rem}
+.sel-card{padding:18px 6px;border-radius:16px;border:2px solid #e0e0d8;background:#fff;font-size:16px;font-weight:600;cursor:pointer;transition:all .18s}
+.sel-card:hover{border-color:#1D9E75}
+.sel-card.chosen{border-color:#1D9E75;background:#E1F5EE;color:#0F6E56;transform:scale(1.04)}
+.gender-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;margin-bottom:1.5rem}
+.gender-card{padding:36px 10px;border-radius:20px;border:2px solid #e0e0d8;background:#fff;font-size:48px;cursor:pointer;transition:all .18s}
+.gender-card .g-label{font-size:18px;font-weight:700;margin-top:10px}
+.gender-card .g-range{font-size:13px;color:#aaa;margin-top:4px}
+.gender-card:hover{border-color:#1D9E75;transform:scale(1.03)}
+.gender-card.chosen-boy{border-color:#378ADD;background:#E6F1FB;transform:scale(1.03)}
+.gender-card.chosen-girl{border-color:#D4537E;background:#FBEAF0;transform:scale(1.03)}
+.num-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:100%;margin-bottom:1.5rem}
+.num-btn{padding:18px 4px;border-radius:14px;border:2px solid #e0e0d8;background:#fff;font-size:18px;font-weight:700;cursor:pointer;transition:all .18s}
+.num-btn:hover:not(.played){border-color:#1D9E75}
+.num-btn.chosen-boy{border-color:#378ADD;background:#E6F1FB;color:#185FA5;transform:scale(1.06)}
+.num-btn.chosen-girl{border-color:#D4537E;background:#FBEAF0;color:#993556;transform:scale(1.06)}
+.num-btn.played{opacity:.35;cursor:default;text-decoration:line-through}
+.wb-note{font-size:13px;padding:12px 16px;border-radius:12px;background:#FAEEDA;color:#633806;margin-bottom:1rem;line-height:1.5;width:100%;text-align:left}
+.lesson-main-card{padding:24px 20px;border-radius:20px;border:2px solid #1D9E75;background:#E1F5EE;cursor:pointer;transition:all .18s;text-align:left;width:100%;margin-bottom:12px}
+.lesson-main-card:hover{background:#cff0e4}
+.lc-icon{font-size:36px;margin-bottom:8px}
+.lc-title{font-size:19px;font-weight:700;color:#0F6E56}
+.lc-sub{font-size:13px;color:#1D9E75;margin-top:3px}
+.lesson-old-card{padding:16px 20px;border-radius:16px;border:1.5px solid #e0e0d8;background:#fff;cursor:pointer;transition:all .18s;text-align:left;width:100%;margin-bottom:12px}
+.lesson-old-card:hover{background:#f5f5f0}
+.old-panel{width:100%;display:none;margin-bottom:1rem}
+.old-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem}
+.old-btn{padding:14px 6px;border-radius:14px;border:1.5px solid #e0e0d8;background:#fff;font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .18s}
+.old-btn:hover,.old-btn.chosen{border-color:#378ADD;background:#E6F1FB;color:#185FA5}
+.old-btn .ob-ct{font-size:11px;color:#aaa;margin-top:2px;font-weight:400}
+.practice-note{font-size:13px;color:#888;background:#f5f5f0;padding:8px 12px;border-radius:10px;margin-bottom:.75rem;width:100%;text-align:left}
+.act-header{display:flex;align-items:center;gap:10px;margin-bottom:.9rem}
+.act-back{width:42px;height:42px;border-radius:12px;border:1px solid #e0e0d8;background:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.act-info{flex:1}.act-info h2{font-size:16px;font-weight:700}.act-info p{font-size:12px;color:#aaa}
+.act-score-lbl{font-size:13px;color:#aaa}
+.pips-row{display:flex;gap:8px;margin-bottom:5px}
+.pip{flex:1;height:6px;border-radius:3px;background:#e0e0d8}
+.pip.done{background:#1D9E75}.pip.active{background:#1D9E75;opacity:.5}
+.stage-lbl{font-size:11px;color:#aaa;text-align:center;margin-bottom:.9rem}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.match-col{display:flex;flex-direction:column;gap:8px}
+.mi{padding:14px 12px;border-radius:14px;border:2px solid #e0e0d8;background:#fff;font-size:16px;cursor:pointer;text-align:center;transition:all .15s;min-height:54px;display:flex;align-items:center;justify-content:center;line-height:1.3}
+.mi:hover{border-color:#1D9E75}.mi.sel{border-color:#1D9E75;background:#E1F5EE;color:#0F6E56}
+.mi.ok{border-color:#1D9E75;background:#E1F5EE;color:#0F6E56;cursor:default}
+.mi.bad{border-color:#E24B4A;background:#FCEBEB;color:#A32D2D;animation:shake .3s}
+.mi.off{opacity:.38;cursor:default}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.spell-center{text-align:center;margin-bottom:1rem}
+.spell-emoji{font-size:60px;margin-bottom:6px}
+.spell-hint{font-size:13px;color:#888;margin-top:4px;line-height:1.5}
+.lboxes{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:1rem}
+.lbox{width:46px;height:54px;border-radius:12px;border:2px solid #e0e0d8;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;background:#f5f5f0;transition:all .15s;cursor:pointer}
+.lbox.filled{background:#fff;border-color:#1D9E75;color:#0F6E56}
+.lbox.ok{background:#E1F5EE;border-color:#1D9E75;color:#085041}
+.lbox.bad{background:#FCEBEB;border-color:#E24B4A;color:#A32D2D}
+.lchoices{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-bottom:1rem}
+.lbtn{width:48px;height:48px;border-radius:12px;border:1.5px solid #e0e0d8;background:#f5f5f0;font-size:18px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit}
+.lbtn:hover:not(:disabled){background:#E1F5EE;border-color:#1D9E75;color:#0F6E56}
+.lbtn:disabled{opacity:.28;cursor:default}
+.sent-box{background:#f5f5f0;border-radius:14px;padding:1.1rem;font-size:18px;line-height:2.4;text-align:center;margin-bottom:1rem}
+.blank-in{border:none;border-bottom:2.5px solid #1D9E75;background:transparent;font-size:18px;font-family:inherit;text-align:center;width:130px;outline:none;color:#1a1a1a}
+.wbank{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:1rem}
+.bword{padding:10px 16px;border-radius:30px;border:1.5px solid #e0e0d8;background:#fff;font-size:14px;cursor:pointer;transition:all .15s}
+.bword:hover:not(.used){background:#E1F5EE;border-color:#1D9E75;color:#0F6E56}
+.bword.used{opacity:.32;cursor:default;text-decoration:line-through}
+.pic-prompt{background:#f5f5f0;border-radius:14px;padding:1rem;text-align:center;font-size:22px;font-weight:700;margin-bottom:1rem}
+.pic-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem}
+.pc{padding:12px 5px;border-radius:14px;border:2px solid #e0e0d8;background:#f5f5f0;text-align:center;cursor:pointer;transition:all .15s}
+.pc:hover{border-color:#1D9E75}.pc.sel{border-color:#1D9E75;background:#E1F5EE}
+.pc.ok{border-color:#1D9E75;background:#E1F5EE;cursor:default}
+.pc.bad{border-color:#E24B4A;background:#FCEBEB;animation:shake .3s;cursor:default}
+.pc .pe{font-size:28px;display:block;margin-bottom:4px}
+.pc .pl{font-size:11px;color:#aaa}.pc.ok .pl{color:#0F6E56}
+.fb{text-align:center;font-size:14px;padding:10px 16px;border-radius:12px;margin-bottom:.8rem;font-weight:600}
+.fb.ok{background:#E1F5EE;color:#085041}.fb.bad{background:#FCEBEB;color:#A32D2D}
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;margin-bottom:1rem}
+.sc-cell{background:#fff;border-radius:12px;padding:10px;text-align:center;border:1px solid #e0e0d8}
+.sc-label{font-size:11px;color:#aaa;margin-bottom:4px}.sc-val{font-size:20px;font-weight:700}
+.res-pts{font-size:15px;font-weight:600;color:#0F6E56;background:#E1F5EE;padding:10px 20px;border-radius:30px;width:100%;text-align:center;margin-bottom:.75rem}
+.lb-wrap{background:#fff;border-radius:16px;border:1px solid #e0e0d8;padding:1rem 1.25rem;width:100%;margin-bottom:1rem}
+.lb-title{font-size:14px;font-weight:700;margin-bottom:8px}
+.lb-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f0f0e8}
+.lb-row:last-child{border-bottom:none}
+.lb-row.hl{background:#E1F5EE;border-radius:8px;padding:6px 8px;margin:0 -8px}
+.lb-rank{font-size:14px;width:22px;text-align:center}
+.lb-cls{flex:1;font-size:13px;font-weight:600}
+.lb-bar-w{width:55px;height:4px;background:#f0f0e8;border-radius:2px;overflow:hidden}
+.lb-bar{height:100%;background:#1D9E75;border-radius:2px}
+.lb-pts{font-size:12px;color:#888;min-width:34px;text-align:right}
+.btn-row{display:flex;gap:10px;width:100%}
+.loading-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(245,245,240,.92);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px}
+.loading-overlay.show{display:flex}
+.spinner{width:32px;height:32px;border:3px solid #e0e0d8;border-top-color:#1D9E75;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pin-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}
+.pin-display{font-size:36px;letter-spacing:10px;font-weight:700;min-height:52px;color:#1a1a1a}
+.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:280px}
+.pin-btn{padding:18px;border-radius:14px;border:1.5px solid #e0e0d8;background:#fff;font-size:22px;font-weight:700;cursor:pointer;transition:all .15s}
+.pin-btn:hover{background:#f5f5f0;border-color:#1D9E75}
+.pin-error{color:#E24B4A;font-size:13px;font-weight:600;min-height:20px}
+.admin-header{display:flex;align-items:center;gap:12px;margin-bottom:1.5rem}
+.admin-header h1{font-size:20px;font-weight:700;flex:1}
+.admin-section{background:#fff;border-radius:16px;border:1px solid #e0e0d8;padding:1.25rem;margin-bottom:1rem}
+.admin-section h2{font-size:15px;font-weight:700;margin-bottom:1rem}
+.lesson-pick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem}
+.lp-btn{padding:12px 6px;border-radius:12px;border:1.5px solid #e0e0d8;background:#f5f5f0;font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s}
+.lp-btn:hover{border-color:#1D9E75}
+.lp-btn.active-lesson{border-color:#1D9E75;background:#E1F5EE;color:#0F6E56}
+.admin-class-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f0f0e8}
+.admin-class-row:last-child{border-bottom:none}
+.acr-cls{font-size:14px;font-weight:600;width:62px}
+.acr-pts{font-size:13px;color:#888;width:46px;text-align:center}
+.acr-input{width:58px;padding:6px 8px;border-radius:8px;border:1.5px solid #e0e0d8;font-size:14px;font-family:inherit;text-align:center;outline:none}
+.acr-input:focus{border-color:#1D9E75}
+.acr-btns{display:flex;gap:6px;margin-left:auto}
+.played-lesson-block{margin-bottom:1rem}
+.played-lesson-block h3{font-size:13px;font-weight:700;margin-bottom:6px}
+.played-tags{display:flex;flex-wrap:wrap;gap:6px}
+.played-tag{padding:4px 10px;border-radius:20px;background:#f5f5f0;border:1px solid #e0e0d8;font-size:12px}
+</style>
+</head>
+<body>
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><span style="font-size:14px;color:#888">Saving...</span></div>
+
+<!-- START -->
+<div class="screen active" id="s-start">
+  <div class="logo-circle" id="logoBtn">🏫</div>
+  <div class="app-title">Vocab Practice</div>
+  <div class="app-sub">Book 2 · Grade 7<br>Your School Name</div>
+  <div class="tap-start" onclick="goTo('s-grade')">▶ Tap to Start</div>
+</div>
+
+<!-- PIN -->
+<div class="screen" id="s-pin">
+  <div class="step-badge">Admin Access</div>
+  <div class="step-title">Enter PIN</div>
+  <div class="step-sub">Enter the 4-digit admin PIN to continue</div>
+  <div class="pin-wrap">
+    <div class="pin-display" id="pinDisplay">————</div>
+    <div class="pin-error" id="pinError"></div>
+    <div class="pin-grid">
+      <div class="pin-btn" onclick="pinPress('1')">1</div>
+      <div class="pin-btn" onclick="pinPress('2')">2</div>
+      <div class="pin-btn" onclick="pinPress('3')">3</div>
+      <div class="pin-btn" onclick="pinPress('4')">4</div>
+      <div class="pin-btn" onclick="pinPress('5')">5</div>
+      <div class="pin-btn" onclick="pinPress('6')">6</div>
+      <div class="pin-btn" onclick="pinPress('7')">7</div>
+      <div class="pin-btn" onclick="pinPress('8')">8</div>
+      <div class="pin-btn" onclick="pinPress('9')">9</div>
+      <div class="pin-btn" onclick="pinClear()" style="font-size:16px">⌫</div>
+      <div class="pin-btn" onclick="pinPress('0')">0</div>
+      <div class="pin-btn btn-green" onclick="pinSubmit()" style="color:#fff;background:#1D9E75;border-color:#1D9E75">✓</div>
+    </div>
+    <button class="btn btn-outline" style="max-width:280px;margin-top:.5rem" onclick="goTo('s-start')">← Back</button>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin-screen" id="s-admin">
+  <div class="admin-header">
+    <div class="act-back" onclick="goTo('s-start')">←</div>
+    <h1>⚙️ Admin Panel</h1>
+  </div>
+  <div class="admin-section">
+    <h2>📖 This Week's Lesson</h2>
+    <div class="lesson-pick-grid" id="adminLessonGrid"></div>
+    <button class="btn btn-green" onclick="saveCurrentLesson()" style="margin-top:0">Save Lesson</button>
+  </div>
+  <div class="admin-section">
+    <h2>🏆 Edit Scoreboard</h2>
+    <div id="adminScoreRows"></div>
+    <div style="display:flex;gap:8px;margin-top:1rem">
+      <button class="btn btn-green" style="margin:0;flex:1" onclick="saveAllScores()">Save All</button>
+      <button class="btn btn-red" style="margin:0;flex:1" onclick="resetAllScores()">Reset All to 0</button>
+    </div>
+  </div>
+  <div class="admin-section">
+    <h2>👤 Students Who Have Played</h2>
+    <div id="adminPlayedList"></div>
+    <button class="btn btn-red" onclick="resetAllPlayed()" style="margin-top:.5rem">Clear All Play Records</button>
+  </div>
+</div>
+
+<!-- GRADE -->
+<div class="screen" id="s-grade">
+  <div class="step-badge">Step 1 of 4</div>
+  <div class="step-title">Select Your Grade</div>
+  <div class="step-sub">Tap your grade to continue</div>
+  <div class="grade-grid">
+    <div class="grade-card" onclick="pickGrade(7)">Grade 7</div>
+    <div class="grade-card locked">Grade 8<div class="lock">🔒</div></div>
+    <div class="grade-card locked">Grade 9<div class="lock">🔒</div></div>
+  </div>
+  <button class="btn btn-outline full-w" onclick="goTo('s-start')">← Back</button>
+</div>
+
+<!-- CLASS -->
+<div class="screen" id="s-class">
+  <div class="step-badge">Step 2 of 4</div>
+  <div class="step-title">Select Your Class</div>
+  <div class="step-sub">Grade 7</div>
+  <div class="class-grid" id="classGrid"></div>
+  <button class="btn btn-outline full-w" onclick="goTo('s-grade')">← Back</button>
+</div>
+
+<!-- GENDER -->
+<div class="screen" id="s-gender">
+  <div class="step-badge">Step 3 of 4</div>
+  <div class="step-title">Are you a boy or girl?</div>
+  <div class="step-sub" id="genderSub"></div>
+  <div class="gender-grid">
+    <div class="gender-card" onclick="pickGender('boy')">👦<div class="g-label">Boy</div><div class="g-range">Numbers 01–15</div></div>
+    <div class="gender-card" onclick="pickGender('girl')">👧<div class="g-label">Girl</div><div class="g-range">Numbers 21–35</div></div>
+  </div>
+  <button class="btn btn-outline full-w" onclick="goTo('s-class')">← Back</button>
+</div>
+
+<!-- NUMBER -->
+<div class="screen" id="s-number">
+  <div class="step-badge">Step 4 of 4</div>
+  <div class="step-title" id="numTitle">Select Your Number</div>
+  <div class="step-sub" id="numSub"></div>
+  <div id="wbNote" class="wb-note" style="display:none"></div>
+  <div class="num-grid" id="numGrid"></div>
+  <button class="btn btn-green full-w" id="numNextBtn" onclick="goToLessonChoice()" disabled>Next →</button>
+  <button class="btn btn-outline full-w" onclick="goTo('s-gender')">← Back</button>
+</div>
+
+<!-- LESSON -->
+<div class="screen" id="s-lesson">
+  <div class="step-badge">Almost there!</div>
+  <div class="step-title" id="lessonTitle">Choose a Lesson</div>
+  <div class="step-sub" id="lessonSub"></div>
+  <div class="lesson-main-card" onclick="startLesson(false)">
+    <div class="lc-icon">📖</div>
+    <div class="lc-title" id="twLabel">This Week's Lesson</div>
+    <div class="lc-sub" id="twSub"></div>
+  </div>
+  <div class="lesson-old-card" onclick="toggleOldPanel()">
+    <div style="font-size:16px;font-weight:700">📂 Practice Older Lessons</div>
+    <div style="font-size:12px;color:#aaa;margin-top:3px">Won't count toward class points</div>
+  </div>
+  <div class="old-panel" id="oldPanel">
+    <div class="practice-note">⚠️ Practice mode — no class points awarded</div>
+    <div class="old-grid" id="oldGrid"></div>
+    <button class="btn btn-green full-w" id="oldStartBtn" onclick="startLesson(true)" disabled style="margin-top:0">Practice This Lesson</button>
+  </div>
+  <button class="btn btn-outline full-w" onclick="goTo('s-number')">← Back</button>
+</div>
+
+<!-- ACTIVITY -->
+<div class="act-screen" id="s-activity">
+  <div class="act-header">
+    <div class="act-back" onclick="goTo('s-lesson')">←</div>
+    <div class="act-info"><h2 id="actTitle"></h2><p id="actSub"></p></div>
+    <div class="act-score-lbl" id="actScore"></div>
+  </div>
+  <div class="pips-row" id="stagePips"></div>
+  <div class="stage-lbl" id="stageLbl"></div>
+  <div id="actContent" style="flex:1;display:flex;flex-direction:column"></div>
+</div>
+
+<!-- COMPLETION -->
+<div class="screen" id="s-complete">
+  <div style="font-size:64px;margin-bottom:.5rem" id="resEmoji"></div>
+  <div style="font-size:22px;font-weight:700;margin-bottom:4px" id="resTitle"></div>
+  <div style="font-size:14px;color:#888;margin-bottom:1rem" id="resMsg"></div>
+  <div class="sc-grid">
+    <div class="sc-cell"><div class="sc-label">EN ↔ 中文</div><div class="sc-val" id="sc0"></div></div>
+    <div class="sc-cell"><div class="sc-label">EN ↔ Picture</div><div class="sc-val" id="sc1"></div></div>
+    <div class="sc-cell"><div class="sc-label">Spelling</div><div class="sc-val" id="sc2"></div></div>
+    <div class="sc-cell"><div class="sc-label">Fill in Blank</div><div class="sc-val" id="sc3"></div></div>
+  </div>
+  <div id="resPts" style="width:100%"></div>
+  <div class="lb-wrap">
+    <div class="lb-title">🏆 Grade 7 Leaderboard</div>
+    <div id="lbRows"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-amber" style="margin:0;flex:1" id="retryBtn" onclick="retry()">Try Again ↺</button>
+    <button class="btn btn-outline" style="margin:0;flex:1" onclick="goHome()">🏠 Home</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAXY8hP8Pmei0l9geqSQpzLBFFpHWO0iJ0",
+  authDomain: "vocab-3b309.firebaseapp.com",
+  databaseURL: "https://vocab-3b309-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "vocab-3b309",
+  storageBucket: "vocab-3b309.firebasestorage.app",
+  messagingSenderId: "328394674369",
+  appId: "1:328394674369:web:e50fbe715d81028f520440"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const LESSONS = {
+  "Get Ready":[
+    {word:"fruit",zh:"水果",emoji:"🍎",sentence:"Oranges are my favorite ____."},
+    {word:"menu",zh:"菜單",emoji:"📋",sentence:"Let's take a look at the ____."},
+    {word:"papaya",zh:"木瓜",emoji:"🍑",sentence:"Let's eat these two ____s."},
+    {word:"watermelon",zh:"西瓜",emoji:"🍉",sentence:"Let's drink some ____ milk."},
+    {word:"strawberry",zh:"草莓",emoji:"🍓",sentence:"Those ____s are big and red."},
+    {word:"guava",zh:"芭樂",emoji:"🍐",sentence:"I eat a ____ after dinner every day."},
+    {word:"grape",zh:"葡萄",emoji:"🍇",sentence:"Betty is drinking ____ juice."},
+    {word:"thirsty",zh:"口渴的",emoji:"💧",sentence:"I am ____. Can I have some juice?"},
+  ],
+  "Lesson 1":[
+    {word:"get up",zh:"起床",emoji:"⏰",sentence:"I ____ at 6:30 every morning."},
+    {word:"teeth",zh:"牙齒",emoji:"🦷",sentence:"Toby brushes his ____ every night."},
+    {word:"face",zh:"臉",emoji:"😊",sentence:"Helen has a beautiful ____."},
+    {word:"exercise",zh:"運動",emoji:"🏃",sentence:"Let's ____ in the gym."},
+    {word:"breakfast",zh:"早餐",emoji:"🍳",sentence:"Susan has a sandwich for ____ every day."},
+    {word:"bath",zh:"沐浴",emoji:"🛁",sentence:"My brother takes a ____ every morning."},
+    {word:"homework",zh:"家庭作業",emoji:"📚",sentence:"Fred is doing his ____ in his room."},
+    {word:"baseball",zh:"棒球",emoji:"⚾",sentence:"I watch ____ games on weekends."},
+    {word:"soccer",zh:"足球",emoji:"⚽",sentence:"Frank does not like ____."},
+    {word:"video game",zh:"電玩遊戲",emoji:"🎮",sentence:"They are playing ____s in the living room."},
+    {word:"team",zh:"隊伍",emoji:"👥",sentence:"I am on the school basketball ____."},
+    {word:"player",zh:"運動員",emoji:"🏅",sentence:"Jason is a very good soccer ____."},
+    {word:"test",zh:"考試",emoji:"📝",sentence:"Rita is studying for her math ____s."},
+    {word:"study",zh:"學習",emoji:"📖",sentence:"I ____ English and math every day."},
+    {word:"enjoy",zh:"享受",emoji:"😄",sentence:"I ____ my school life."},
+    {word:"together",zh:"一起",emoji:"🤝",sentence:"We go to school ____ every day."},
+    {word:"badminton",zh:"羽毛球",emoji:"🏸",sentence:"Paul is playing ____ in the park."},
+    {word:"tennis",zh:"網球",emoji:"🎾",sentence:"My dad is playing ____ with my mom."},
+    {word:"win",zh:"贏",emoji:"🏆",sentence:"Can you ____ the tennis game?"},
+    {word:"fun",zh:"好玩的",emoji:"🎉",sentence:"English classes are a lot of ____."},
+  ],
+  "Lesson 2":[
+    {word:"housework",zh:"家事",emoji:"🧹",sentence:"William helps with the ____ every day."},
+    {word:"mop",zh:"拖（地）",emoji:"🧽",sentence:"Let's ____ the floor together."},
+    {word:"floor",zh:"地板",emoji:"🏠",sentence:"There is a big box on the ____."},
+    {word:"clean",zh:"打掃",emoji:"✨",sentence:"The room is dirty. Let's ____ it."},
+    {word:"trash",zh:"垃圾",emoji:"🗑️",sentence:"There is a lot of ____ in the house."},
+    {word:"street",zh:"街道",emoji:"🛣️",sentence:"The movie theater is on a busy ____."},
+    {word:"market",zh:"市場",emoji:"🛒",sentence:"Ron goes to the ____ every Sunday."},
+    {word:"town",zh:"城鎮",emoji:"🏘️",sentence:"There is a library in ____."},
+    {word:"habit",zh:"習慣",emoji:"🔄",sentence:"Taking a rest after lunch is her ____."},
+    {word:"never",zh:"從不",emoji:"🚫",sentence:"He is ____ late for school."},
+    {word:"often",zh:"時常",emoji:"🔁",sentence:"Nancy ____ eats two eggs for breakfast."},
+    {word:"sometimes",zh:"偶爾",emoji:"🎲",sentence:"Sean ____ drinks juice in the morning."},
+    {word:"usually",zh:"通常",emoji:"📆",sentence:"We ____ go to school at 7 a.m."},
+    {word:"seldom",zh:"很少",emoji:"🔕",sentence:"I ____ eat out."},
+    {word:"once",zh:"一次",emoji:"1️⃣",sentence:"Tina goes to the library ____ a week."},
+    {word:"twice",zh:"兩次",emoji:"2️⃣",sentence:"My brother goes to the zoo ____ a month."},
+    {word:"cellphone",zh:"手機",emoji:"📱",sentence:"What's your ____ number?"},
+    {word:"germ",zh:"細菌",emoji:"🦠",sentence:"There are a lot of ____s on the swings."},
+    {word:"answer",zh:"答案",emoji:"💬",sentence:"Do you know the ____ to this question?"},
+    {word:"work",zh:"工作",emoji:"💼",sentence:"Are you at ____ right now?"},
+  ],
+  "Lesson 3":[
+    {word:"January",zh:"一月",emoji:"❄️",sentence:"The year starts with ____."},
+    {word:"February",zh:"二月",emoji:"💝",sentence:"There are only 28 days in ____."},
+    {word:"March",zh:"三月",emoji:"🌸",sentence:"My mom's birthday is on ____ 8."},
+    {word:"April",zh:"四月",emoji:"🌷",sentence:"Peter goes to the USA every ____."},
+    {word:"May",zh:"五月",emoji:"🌹",sentence:"Mother's Day is in ____."},
+    {word:"June",zh:"六月",emoji:"☀️",sentence:"____ is the 6th month of the year."},
+    {word:"July",zh:"七月",emoji:"🎆",sentence:"We do not go to school in ____."},
+    {word:"August",zh:"八月",emoji:"🌊",sentence:"Father's Day is on ____ 8th."},
+    {word:"September",zh:"九月",emoji:"🍂",sentence:"Teacher's Day is in ____."},
+    {word:"October",zh:"十月",emoji:"🎃",sentence:"____ 10 is a holiday in Taiwan."},
+    {word:"November",zh:"十一月",emoji:"🍁",sentence:"____ is between October and December."},
+    {word:"December",zh:"十二月",emoji:"🎄",sentence:"____ means the end of a year."},
+    {word:"Easter",zh:"復活節",emoji:"🐣",sentence:"Children find eggs on ____."},
+    {word:"Halloween",zh:"萬聖節",emoji:"👻",sentence:"People wear special clothes on ____."},
+    {word:"Thanksgiving",zh:"感恩節",emoji:"🦃",sentence:"____ is a holiday in the USA."},
+    {word:"Christmas",zh:"聖誕節",emoji:"🎅",sentence:"Alex's family gets together at ____."},
+    {word:"holiday",zh:"節日",emoji:"🎉",sentence:"Ivy is on ____ this week."},
+    {word:"date",zh:"日期",emoji:"📅",sentence:"What's the ____ today?"},
+    {word:"busy",zh:"忙碌的",emoji:"⏱️",sentence:"I am ____ now."},
+    {word:"love",zh:"愛",emoji:"❤️",sentence:"We get a lot of ____ from our parents."},
+  ],
+  "Lesson 4":[
+    {word:"food",zh:"食物",emoji:"🍱",sentence:"The ____ here is yummy."},
+    {word:"bottle",zh:"瓶子",emoji:"🍶",sentence:"Where is the water ____?"},
+    {word:"bowl",zh:"碗",emoji:"🥣",sentence:"Can I have a ____ of rice?"},
+    {word:"rice",zh:"米飯",emoji:"🍚",sentence:"We eat ____ for lunch every day."},
+    {word:"noodle",zh:"麵條",emoji:"🍜",sentence:"Let's eat ____s for dinner."},
+    {word:"pie",zh:"派",emoji:"🥧",sentence:"They are making a ____ in the kitchen."},
+    {word:"glass",zh:"玻璃杯",emoji:"🥛",sentence:"I want a ____ of black tea."},
+    {word:"salt",zh:"鹽",emoji:"🧂",sentence:"Don't add too much ____ to the egg."},
+    {word:"sugar",zh:"糖",emoji:"🍬",sentence:"My dad drinks coffee with ____ and milk."},
+    {word:"pancake",zh:"煎餅",emoji:"🥞",sentence:"Sherry is making ____s in the kitchen."},
+    {word:"flour",zh:"麵粉",emoji:"🌾",sentence:"I don't have enough ____."},
+    {word:"enough",zh:"足夠的",emoji:"✅",sentence:"A small sandwich is ____ for me."},
+    {word:"yummy",zh:"美味的",emoji:"😋",sentence:"These pies are ____."},
+    {word:"easy",zh:"容易的",emoji:"😊",sentence:"It is very ____ for me to answer."},
+    {word:"delicious",zh:"美味的",emoji:"🤤",sentence:"The cook can make ____ dishes."},
+    {word:"difficult",zh:"困難的",emoji:"😓",sentence:"It is not ____ for him to make pies."},
+    {word:"butter",zh:"奶油",emoji:"🧈",sentence:"Put some sugar, salt, and ____ in the pan."},
+    {word:"round",zh:"圓形的",emoji:"⭕",sentence:"Frank has a ____ face."},
+    {word:"ready",zh:"準備好的",emoji:"✅",sentence:"Are you ____ for the race?"},
+    {word:"give",zh:"給",emoji:"🎁",sentence:"Let's ____ our seats to those old men."},
+  ],
+  "Lesson 5":[
+    {word:"science",zh:"科學",emoji:"🔬",sentence:"When do you have ____ class?"},
+    {word:"camp",zh:"營隊",emoji:"⛺",sentence:"I joined an English ____ and made new friends."},
+    {word:"art",zh:"美術",emoji:"🎨",sentence:"Students draw pictures in ____ class."},
+    {word:"museum",zh:"博物館",emoji:"🏛️",sentence:"You cannot eat in the ____."},
+    {word:"ago",zh:"……之前",emoji:"⏪",sentence:"Zoe was short two years ____."},
+    {word:"computer",zh:"電腦",emoji:"💻",sentence:"There are thirty ____s in the classroom."},
+    {word:"before",zh:"在……之前",emoji:"⬅️",sentence:"John always works out ____ dinner."},
+    {word:"yesterday",zh:"昨天",emoji:"📆",sentence:"Chris was busy ____, but he is free today."},
+    {word:"minute",zh:"分鐘",emoji:"⏱️",sentence:"The class is about forty-five ____s long."},
+    {word:"hour",zh:"小時",emoji:"🕐",sentence:"The meeting ended an ____ ago."},
+    {word:"story",zh:"故事",emoji:"📖",sentence:"It's a ____ about a fox."},
+    {word:"lazy",zh:"懶惰的",emoji:"😴",sentence:"Don't be so ____."},
+    {word:"wrong",zh:"錯誤的",emoji:"❌",sentence:"Am I ____? The answer is B, not D."},
+    {word:"save",zh:"救；儲存",emoji:"💾",sentence:"The mouse ____d the lion's life."},
+    {word:"share",zh:"分享",emoji:"🤝",sentence:"Let's ____ the pie with our friends."},
+    {word:"snack",zh:"點心",emoji:"🍿",sentence:"The ____s are free."},
+    {word:"climb",zh:"爬",emoji:"🧗",sentence:"The monkeys ____ed the trees."},
+    {word:"wise",zh:"有智慧的",emoji:"🦉",sentence:"The old woman is ____."},
+    {word:"hunt",zh:"打獵",emoji:"🏹",sentence:"Bears sometimes ____ at night."},
+    {word:"learn",zh:"學習",emoji:"📚",sentence:"James can't play tennis, but he is ____ing."},
+  ],
+  "Lesson 6":[
+    {word:"mountain",zh:"山",emoji:"⛰️",sentence:"Jane went to the ____s last week."},
+    {word:"lake",zh:"湖",emoji:"🏞️",sentence:"Sun Moon ____ is beautiful."},
+    {word:"island",zh:"島嶼",emoji:"🏝️",sentence:"There are some ____s around Taiwan."},
+    {word:"beach",zh:"海灘",emoji:"🏖️",sentence:"Rachel went to the ____ this afternoon."},
+    {word:"river",zh:"河",emoji:"🌊",sentence:"Jay swam in the ____ last weekend."},
+    {word:"hill",zh:"小山",emoji:"🏔️",sentence:"There are beautiful houses on the ____."},
+    {word:"pond",zh:"池塘",emoji:"🐸",sentence:"There aren't any fish in the ____."},
+    {word:"hike",zh:"健行",emoji:"🥾",sentence:"Ivan goes ____ing with his family."},
+    {word:"airport",zh:"機場",emoji:"✈️",sentence:"We got to the ____ early this morning."},
+    {word:"bright",zh:"明亮的",emoji:"💡",sentence:"The rooms were large and ____."},
+    {word:"suitcase",zh:"行李箱",emoji:"🧳",sentence:"What's in your ____? It's heavy."},
+    {word:"through",zh:"穿越",emoji:"🚶",sentence:"Lily walked ____ the park."},
+    {word:"plastic",zh:"塑膠的",emoji:"♻️",sentence:"Do you need a ____ bag?"},
+    {word:"keep",zh:"保持",emoji:"🔒",sentence:"Let's ____ the streets clean."},
+    {word:"hate",zh:"討厭",emoji:"😤",sentence:"Joshua ____s noises."},
+    {word:"amazing",zh:"令人驚奇的",emoji:"😲",sentence:"Ashley is an ____ tennis player."},
+    {word:"hospital",zh:"醫院",emoji:"🏥",sentence:"My parents work in the same ____."},
+    {word:"collect",zh:"收集",emoji:"🗂️",sentence:"The kid ____ed a lot of trash."},
+    {word:"lead",zh:"領導",emoji:"👑",sentence:"She can ____ the team."},
+    {word:"buy",zh:"買",emoji:"🛍️",sentence:"Let's ____ some flowers for Mom."},
+  ],
+};
+
+const LESSON_KEYS = Object.keys(LESSONS);
+const CLASSES = Array.from({length:16},(_,i)=>`7${String(i+1).padStart(2,'0')}`);
+const QS=5, PASS=0.75, ADMIN_PIN='8967';
+const STAGE_NAMES=['EN ↔ 中文','EN ↔ Picture','Spelling','Fill in Blank'];
+
+let thisWeek='Lesson 6';
+let sel={grade:null,cls:null,gender:null,num:null,lesson:null,practice:false};
+let leaderboard={}, playedLog={};
+let actState={}, scores=[0,0,0,0], stage=0, oldPick=null;
+
+// Long-press logo for admin
+let logoTimer=null;
+const logoBtn=document.getElementById('logoBtn');
+logoBtn.addEventListener('touchstart',e=>{e.preventDefault();logoTimer=setTimeout(()=>goTo('s-pin'),1000);});
+logoBtn.addEventListener('touchend',()=>clearTimeout(logoTimer));
+logoBtn.addEventListener('mousedown',()=>{logoTimer=setTimeout(()=>goTo('s-pin'),1000);});
+logoBtn.addEventListener('mouseup',()=>clearTimeout(logoTimer));
+logoBtn.addEventListener('mouseleave',()=>clearTimeout(logoTimer));
+
+// PIN
+let pinVal='';
+window.pinPress=function(d){if(pinVal.length>=4)return;pinVal+=d;updPin();};
+window.pinClear=function(){pinVal=pinVal.slice(0,-1);updPin();document.getElementById('pinError').textContent='';};
+window.pinSubmit=function(){
+  if(pinVal===ADMIN_PIN){pinVal='';updPin();openAdmin();}
+  else{document.getElementById('pinError').textContent='Incorrect PIN. Try again.';pinVal='';updPin();}
+};
+function updPin(){document.getElementById('pinDisplay').textContent=pinVal?'●'.repeat(pinVal.length)+'—'.repeat(4-pinVal.length):'————';}
+
+// Admin
+function openAdmin(){renderAdminLessons();renderAdminScores();renderAdminPlayed();goTo('s-admin');}
+
+function renderAdminLessons(){
+  document.getElementById('adminLessonGrid').innerHTML=LESSON_KEYS.map(l=>`
+    <div class="lp-btn${l===thisWeek?' active-lesson':''}" id="alp-${l.replace(/ /g,'-')}" onclick="adminPickLesson('${l}')">${l}</div>`).join('');
+}
+window.adminPickLesson=function(l){
+  thisWeek=l;
+  document.querySelectorAll('.lp-btn').forEach(b=>b.classList.remove('active-lesson'));
+  document.getElementById('alp-'+l.replace(/ /g,'-'))?.classList.add('active-lesson');
+};
+window.saveCurrentLesson=async function(){
+  showLoad(true);
+  try{await set(ref(db,'settings/thisWeek'),thisWeek);}catch(e){console.error(e);}
+  showLoad(false);
+  alert('✅ This week\'s lesson set to: '+thisWeek);
+};
+
+function renderAdminScores(){
+  document.getElementById('adminScoreRows').innerHTML=CLASSES.map(c=>`
+    <div class="admin-class-row">
+      <span class="acr-cls">Class ${c}</span>
+      <span class="acr-pts">${leaderboard[c]||0} pts</span>
+      <input class="acr-input" id="inp-${c}" type="number" min="0" value="${leaderboard[c]||0}">
+      <div class="acr-btns">
+        <button class="btn-sm btn-green" style="background:#1D9E75;color:#fff" onclick="setOneScore('${c}')">Set</button>
+        <button class="btn-sm btn-red" style="background:#E24B4A;color:#fff" onclick="resetOne('${c}')">0</button>
+      </div>
+    </div>`).join('');
+}
+window.setOneScore=async function(c){
+  const v=parseInt(document.getElementById('inp-'+c).value)||0;
+  leaderboard[c]=v; showLoad(true); await saveLB(); showLoad(false); renderAdminScores();
+};
+window.resetOne=async function(c){
+  if(!confirm('Reset Class '+c+' to 0?'))return;
+  leaderboard[c]=0; showLoad(true); await saveLB(); showLoad(false); renderAdminScores();
+};
+window.saveAllScores=async function(){
+  CLASSES.forEach(c=>{leaderboard[c]=parseInt(document.getElementById('inp-'+c)?.value)||0;});
+  showLoad(true); await saveLB(); showLoad(false); renderAdminScores(); alert('✅ All scores saved!');
+};
+window.resetAllScores=async function(){
+  if(!confirm('Reset ALL class scores to 0?\nThis cannot be undone.'))return;
+  CLASSES.forEach(c=>leaderboard[c]=0); showLoad(true); await saveLB(); showLoad(false); renderAdminScores(); alert('✅ All scores reset to 0.');
+};
+
+function renderAdminPlayed(){
+  const el=document.getElementById('adminPlayedList');
+  const entries=Object.entries(playedLog).filter(([,v])=>v&&v.toString().replace(/,/g,'').length>0);
+  if(!entries.length){el.innerHTML='<div style="font-size:13px;color:#aaa;padding:8px 0">No students have played yet.</div>';return;}
+  el.innerHTML=entries.map(([key,val])=>{
+    const nums=val.toString().split(',').filter(Boolean);
+    const label=key.replace(/_/g,' ');
+    return`<div class="played-lesson-block"><h3>${label}</h3><div class="played-tags">${nums.map(n=>`<span class="played-tag">#${n}</span>`).join('')}</div></div>`;
+  }).join('');
+}
+window.resetAllPlayed=async function(){
+  if(!confirm('Clear all play records?\nStudents will be able to earn points again.'))return;
+  playedLog={}; showLoad(true);
+  try{await set(ref(db,'played'),{});}catch(e){console.error(e);}
+  showLoad(false); renderAdminPlayed(); alert('✅ All play records cleared.');
+};
+
+// Firebase
+function showLoad(v){document.getElementById('loadingOverlay').className='loading-overlay'+(v?' show':'');}
+async function loadFromFirebase(){
+  showLoad(true);
+  try{
+    const [lbS,plS,twS]=await Promise.all([get(ref(db,'leaderboard')),get(ref(db,'played')),get(ref(db,'settings/thisWeek'))]);
+    if(lbS.exists())leaderboard=lbS.val();
+    if(plS.exists())playedLog=plS.val();
+    if(twS.exists())thisWeek=twS.val();
+  }catch(e){console.error(e);}
+  CLASSES.forEach(c=>{if(!leaderboard[c])leaderboard[c]=0;});
+  showLoad(false);
+}
+async function saveLB(){try{await set(ref(db,'leaderboard'),leaderboard);}catch(e){console.error(e);}}
+async function savePlayed(){try{await set(ref(db,'played'),playedLog);}catch(e){console.error(e);}}
+
+// Audio
+const AC=window.AudioContext||window.webkitAudioContext; let actx;
+function gctx(){if(!actx)actx=new AC();return actx;}
+function tone(f,d,t='sine',v=.3){try{const c=gctx(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.start();o.stop(c.currentTime+d);}catch(e){}}
+function sOk(){tone(523,.1);setTimeout(()=>tone(659,.15),100);setTimeout(()=>tone(784,.2),220);}
+function sBad(){tone(200,.3,'sawtooth',.18);}
+function sWin(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.2),i*120));}
+
+// Nav
+function goTo(id){document.querySelectorAll('.screen,.act-screen,.admin-screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+window.goTo=goTo;
+window.goHome=function(){sel={grade:null,cls:null,gender:null,num:null,lesson:null,practice:false};goTo('s-start');};
+
+// Student flow
+window.pickGrade=function(g){sel.grade=g;document.getElementById('classGrid').innerHTML=CLASSES.map(c=>`<div class="sel-card" id="cb-${c}" onclick="pickClass('${c}')">${c}</div>`).join('');goTo('s-class');};
+window.pickClass=function(c){sel.cls=c;document.querySelectorAll('.sel-card').forEach(b=>b.classList.remove('chosen'));document.getElementById('cb-'+c)?.classList.add('chosen');setTimeout(()=>{document.getElementById('genderSub').textContent=`Grade ${sel.grade} · Class ${sel.cls}`;goTo('s-gender');},160);};
+window.pickGender=function(g){
+  sel.gender=g; const isBoy=g==='boy';
+  document.getElementById('numTitle').textContent=isBoy?'Select Your Number (Boys)':'Select Your Number (Girls)';
+  document.getElementById('numSub').textContent=`Grade ${sel.grade} · Class ${sel.cls} · ${isBoy?'Boy':'Girl'}`;
+  const pk=`${sel.cls}_${thisWeek.replace(/ /g,'_')}`;
+  const played=(playedLog[pk]||'').toString().split(',').filter(Boolean);
+  const nums=isBoy?Array.from({length:15},(_,i)=>String(i+1).padStart(2,'0')):Array.from({length:15},(_,i)=>String(i+21));
+  document.getElementById('numGrid').innerHTML=nums.map(n=>{const hp=played.includes(n);return`<div class="num-btn${hp?' played':''}" id="nb-${n}" onclick="pickNum('${n}',${hp})">${n}</div>`;}).join('');
+  sel.num=null;document.getElementById('numNextBtn').disabled=true;document.getElementById('wbNote').style.display='none';
+  goTo('s-number');
+};
+window.pickNum=function(n,hasPlayed){
+  sel.num=n;
+  document.querySelectorAll('.num-btn').forEach(b=>b.classList.remove('chosen-boy','chosen-girl'));
+  document.getElementById('nb-'+n)?.classList.add(sel.gender==='boy'?'chosen-boy':'chosen-girl');
+  const wb=document.getElementById('wbNote');
+  if(hasPlayed){wb.style.display='block';wb.textContent=`👋 Welcome back, student ${n}! You already earned a point for Class ${sel.cls} this lesson. This round will be practice only.`;}
+  else wb.style.display='none';
+  const btn=document.getElementById('numNextBtn');btn.disabled=false;btn.textContent=hasPlayed?'Practice →':'Next →';
+};
+window.goToLessonChoice=function(){
+  if(!sel.num)return;
+  document.getElementById('lessonTitle').textContent=`Hi, student ${sel.num}!`;
+  document.getElementById('lessonSub').textContent=`Class ${sel.cls} · Choose a lesson`;
+  document.getElementById('twLabel').textContent=`📖 ${thisWeek} — This Week`;
+  document.getElementById('twSub').textContent=LESSONS[thisWeek].length+' words · Counts toward class points';
+  oldPick=null;document.getElementById('oldStartBtn').disabled=true;document.getElementById('oldPanel').style.display='none';
+  const keys=LESSON_KEYS.filter(l=>l!==thisWeek);
+  document.getElementById('oldGrid').innerHTML=keys.map(l=>`<div class="old-btn" id="ol-${l.replace(/ /g,'-')}" onclick="pickOld('${l}')">${l}<div class="ob-ct">${LESSONS[l].length}w</div></div>`).join('');
+  goTo('s-lesson');
+};
+window.toggleOldPanel=function(){const p=document.getElementById('oldPanel');p.style.display=p.style.display==='none'?'block':'none';};
+window.pickOld=function(l){oldPick=l;document.querySelectorAll('.old-btn').forEach(b=>b.classList.remove('chosen'));document.getElementById('ol-'+l.replace(/ /g,'-'))?.classList.add('chosen');document.getElementById('oldStartBtn').disabled=false;};
+window.startLesson=function(isPractice){
+  const pk=`${sel.cls}_${thisWeek.replace(/ /g,'_')}`;
+  const played=(playedLog[pk]||'').toString().split(',').filter(Boolean);
+  const alreadyPlayed=played.includes(sel.num);
+  sel.lesson=isPractice?(oldPick||thisWeek):thisWeek;
+  sel.practice=isPractice||alreadyPlayed;
+  scores=[0,0,0,0];stage=0;
+  document.getElementById('actTitle').textContent=STAGE_NAMES[0];
+  document.getElementById('actSub').textContent=`${sel.lesson} · Class ${sel.cls} · #${sel.num}`;
+  goTo('s-activity');loadStage(0);
+};
+
+// Activities
+function loadStage(s){stage=s;updatePips();document.getElementById('actTitle').textContent=STAGE_NAMES[s];const words=shuffle([...LESSONS[sel.lesson]]);if(s===0)initMCN(words);else if(s===1)initMPic(words);else if(s===2)initSpell(words);else initFill(words);}
+function updatePips(){document.getElementById('stagePips').innerHTML=[0,1,2,3].map(i=>`<div class="pip${i<stage?' done':i===stage?' active':''}"></div>`).join('');document.getElementById('stageLbl').textContent=STAGE_NAMES[stage]+' — '+(actState.qIdx!==undefined?actState.qIdx+1:1)+' of '+QS;}
+function nextStage(){if(stage<3)loadStage(stage+1);else showCompletion();}
+function ac(){return document.getElementById('actContent');}
+function setScore(t){document.getElementById('actScore').textContent=t;}
+
+function initMCN(words){const pool=shuffle(words).slice(0,QS);const rights=shuffle(pool.map(w=>w.zh));actState={pool,rights,selL:null,selR:null,matched:[],correct:0,total:QS};setScore(`0/${QS}`);updatePips();renderMCN();}
+function renderMCN(){
+  const{pool,rights,matched,selL,selR,correct,total}=actState;
+  if(correct===pool.length){scores[0]=correct;nextStage();return;}
+  setScore(`${correct}/${total}`);
+  document.getElementById('stageLbl').textContent=`EN ↔ 中文 — Match all ${pool.length}`;
+  ac().innerHTML=`<div class="match-grid"><div class="match-col">${pool.map((w,i)=>`<div class="mi ${matched.includes(i)?'ok off':selL===i?'sel':''}" onclick="mcL(${i})">${w.word}</div>`).join('')}</div><div class="match-col">${rights.map((zh,i)=>`<div class="mi ${matched.includes(actState.pool.findIndex(w=>w.zh===zh))?'ok off':selR===i?'sel':''}" onclick="mcR(${i})">${zh}</div>`).join('')}</div></div>`;
+}
+window.mcL=function(i){if(actState.matched.includes(i))return;actState.selL=i;if(actState.selR!==null)chkMC();else renderMCN();};
+window.mcR=function(i){if(actState.matched.includes(actState.pool.findIndex(w=>w.zh===actState.rights[i])))return;actState.selR=i;if(actState.selL!==null)chkMC();else renderMCN();};
+function chkMC(){const{pool,rights,selL,selR}=actState;if(rights[selR]===pool[selL].zh){actState.matched.push(selL);actState.correct++;sOk();}else{sBad();const c=ac().querySelectorAll('.match-col');c[0]?.children[selL]?.classList.add('bad');c[1]?.children[selR]?.classList.add('bad');setTimeout(()=>{c[0]?.children[selL]?.classList.remove('bad');c[1]?.children[selR]?.classList.remove('bad');},600);}actState.selL=null;actState.selR=null;setTimeout(renderMCN,200);}
+
+function initMPic(words){const pool=shuffle(words).slice(0,QS);actState={pool,allWords:words,qIdx:0,score:0,total:QS,sel:null};setScore(`0/${QS}`);renderMPic();}
+function renderMPic(){const{pool,allWords,qIdx,score,sel,total}=actState;if(qIdx>=total){scores[1]=score;nextStage();return;}const t=pool[qIdx];const cards=shuffle([t,...shuffle(allWords.filter(w=>w.word!==t.word)).slice(0,7)]);actState.cards=cards;setScore(`${score}/${total}`);document.getElementById('stageLbl').textContent=`EN ↔ Picture — ${qIdx+1} of ${total}`;ac().innerHTML=`<div class="pic-prompt">${t.word}</div><p style="font-size:13px;color:#aaa;text-align:center;margin-bottom:.8rem">Which picture matches?</p><div class="pic-grid">${cards.map((d,i)=>{const isC=d.word===t.word;return`<div class="pc ${sel===i?(isC?'ok':'bad'):''}" onclick="selPic(${i},${isC})"><span class="pe">${d.emoji}</span><span class="pl">${sel!==null&&isC?d.word:'?'}</span></div>`;}).join('')}</div>`;}
+window.selPic=function(i,isC){if(actState.sel!==null)return;actState.sel=i;if(isC){actState.score++;sOk();}else sBad();renderMPic();setTimeout(()=>{actState.sel=null;actState.qIdx++;renderMPic();},isC?650:1000);};
+
+function initSpell(words){const pool=shuffle(words.filter(w=>w.word.replace(/\s/g,'').length<=10)).slice(0,QS);actState={pool,qIdx:0,score:0,total:QS,placed:[],choices:[],checked:false};loadSpellQ();}
+function loadSpellQ(){if(actState.qIdx>=actState.total){scores[2]=actState.score;nextStage();return;}const w=actState.pool[actState.qIdx];const clean=w.word.replace(/\s/g,'');actState.placed=Array(clean.length).fill(null);actState.checked=false;const letters=clean.toUpperCase().split('');const extras='ABCDEFGHIJKLMNOPRSTUW'.split('').filter(c=>!letters.includes(c));actState.choices=shuffle([...letters,...shuffle(extras).slice(0,4)]).map((l,i)=>({letter:l,used:false,id:i}));setScore(`${actState.score}/${actState.total}`);document.getElementById('stageLbl').textContent=`Spelling — ${actState.qIdx+1} of ${actState.total}`;renderSpell();}
+function renderSpell(){const{pool,qIdx,placed,choices,checked}=actState;const w=pool[qIdx];const clean=w.word.replace(/\s/g,'');const allPlaced=placed.every(p=>p!==null);ac().innerHTML=`<div class="spell-center"><div class="spell-emoji">${w.emoji}</div><div style="font-size:16px;font-weight:600">${w.zh}</div><div class="spell-hint">${w.sentence.replace('____','_ _ _ _')}</div></div><div class="lboxes">${placed.map((l,i)=>{let cls=checked&&l!==null?(l.toUpperCase()===clean[i].toUpperCase()?'ok':'bad'):l!==null?'filled':'';return`<div class="lbox ${cls}" onclick="rmL(${i})">${l||''}</div>`;}).join('')}</div><div class="lchoices">${choices.map((c,i)=>`<button class="lbtn" ${c.used?'disabled':''} onclick="plL(${i})">${c.letter}</button>`).join('')}</div><div style="display:flex;gap:10px;margin-bottom:.8rem"><button class="btn btn-outline" style="margin:0" onclick="clrSpell()">Clear</button><button class="btn btn-green" style="margin:0;${allPlaced?'':'opacity:.35;cursor:default'}" onclick="${allPlaced?'chkSpell()':''}">Check</button></div><div id="spFb"></div>`;}
+window.plL=function(ci){const e=actState.placed.indexOf(null);if(e===-1)return;actState.placed[e]=actState.choices[ci].letter;actState.choices[ci].used=true;renderSpell();};
+window.rmL=function(pi){if(actState.placed[pi]===null||actState.checked)return;const l=actState.placed[pi];const ci=actState.choices.findIndex(c=>c.used&&c.letter===l);if(ci>-1)actState.choices[ci].used=false;actState.placed[pi]=null;renderSpell();};
+window.clrSpell=function(){actState.placed=Array(actState.pool[actState.qIdx].word.replace(/\s/g,'').length).fill(null);actState.choices.forEach(c=>c.used=false);renderSpell();};
+window.chkSpell=function(){const w=actState.pool[actState.qIdx];const clean=w.word.replace(/\s/g,'');const ok=actState.placed.join('').toLowerCase()===clean.toLowerCase();actState.checked=true;if(ok){actState.score++;sOk();}else sBad();renderSpell();const fb=document.getElementById('spFb');if(fb){fb.className='fb '+(ok?'ok':'bad');fb.textContent=ok?'✓ Correct!':'✗ Answer: '+w.word.toUpperCase();}setTimeout(()=>{actState.qIdx++;loadSpellQ();},1500);};
+
+function initFill(words){const pool=shuffle(words).slice(0,QS);actState={pool,allWords:words,qIdx:0,score:0,total:QS,input:'',bu:null,feedback:null,bank:[],bg:-1};renderFill();}
+function renderFill(){const{pool,allWords,qIdx,score,input,bu,feedback,total}=actState;if(qIdx>=total){scores[3]=score;showCompletion();return;}const w=pool[qIdx];if(actState.bg!==qIdx){const d=shuffle(allWords.map(x=>x.word).filter(x=>x!==w.word)).slice(0,3);actState.bank=shuffle([w.word,...d]);actState.bg=qIdx;}const parts=w.sentence.split('____');setScore(`${score}/${total}`);document.getElementById('stageLbl').textContent=`Fill in Blank — ${qIdx+1} of ${total}`;ac().innerHTML=`<div style="text-align:center;font-size:14px;color:#aaa;margin-bottom:.5rem">${w.emoji} ${w.zh}</div><div class="sent-box">${parts[0]}<input class="blank-in" id="fi" value="${input}" oninput="actState.input=this.value" onkeydown="if(event.key==='Enter')chkFill()" placeholder="type here" autocomplete="off">${parts[1]||''}</div><div class="wbank">${actState.bank.map((bw,i)=>`<div class="bword${bu===i?' used':''}" onclick="pBank(${i},'${bw.replace(/'/g,"\\'")}')">${bw}</div>`).join('')}</div>${feedback?`<div class="fb ${feedback.ok?'ok':'bad'}">${feedback.msg}</div>`:''}<button class="btn btn-green" onclick="chkFill()">Check Answer</button>`;if(!feedback)setTimeout(()=>{document.getElementById('fi')?.focus();},50);}
+window.pBank=function(i,w){actState.input=w;actState.bu=i;renderFill();};
+window.chkFill=function(){const w=actState.pool[actState.qIdx];const ok=actState.input.trim().toLowerCase()===w.word.toLowerCase();actState.feedback={ok,msg:ok?`✓ "${w.word}" — ${w.zh}`:`✗ Answer: "${w.word}" (${w.zh})`};if(ok){actState.score++;sOk();}else sBad();renderFill();setTimeout(()=>{actState.qIdx++;actState.input='';actState.bu=null;actState.feedback=null;renderFill();},1600);};
+
+async function showCompletion(){
+  const total=QS*4,correct=scores.reduce((a,b)=>a+b,0),pct=correct/total;
+  const passed=pct>=PASS;
+  const pk=`${sel.cls}_${thisWeek.replace(/ /g,'_')}`;
+  const played=(playedLog[pk]||'').toString().split(',').filter(Boolean);
+  const alreadyPlayed=played.includes(sel.num);
+  const earnPoint=passed&&!sel.practice&&!alreadyPlayed;
+  if(earnPoint){showLoad(true);leaderboard[sel.cls]=(leaderboard[sel.cls]||0)+1;playedLog[pk]=[...played,sel.num].join(',');await Promise.all([saveLB(),savePlayed()]);showLoad(false);}
+  sWin();
+  document.getElementById('resEmoji').textContent=pct===1?'🌟':pct>=.75?'🎉':pct>=.5?'👍':'📚';
+  document.getElementById('resTitle').textContent=pct===1?'Perfect!':pct>=.75?'Great job!':pct>=.5?'Good effort!':'Keep practicing!';
+  document.getElementById('resMsg').textContent=`${correct} / ${total} correct (${Math.round(pct*100)}%)`;
+  scores.forEach((s,i)=>document.getElementById('sc'+i).textContent=`${s}/${QS}`);
+  const ptsEl=document.getElementById('resPts');
+  if(earnPoint)ptsEl.innerHTML=`<div class="res-pts">+1 point for Class ${sel.cls}! 🏆</div>`;
+  else if(sel.practice||alreadyPlayed)ptsEl.innerHTML=`<div class="fb ok" style="margin:0 0 .75rem">Practice mode — no points added</div>`;
+  else ptsEl.innerHTML=`<div class="fb bad" style="margin:0 0 .75rem">Score below 75% — try again to earn a point!</div>`;
+  document.getElementById('retryBtn').textContent=earnPoint?'Practice Again ↺':'Try Again ↺';
+  renderLB();goTo('s-complete');
+}
+function renderLB(){const sorted=CLASSES.slice().sort((a,b)=>leaderboard[b]-leaderboard[a]);const max=Math.max(1,...CLASSES.map(c=>leaderboard[c]));const medals=['🥇','🥈','🥉'];document.getElementById('lbRows').innerHTML=sorted.map((c,i)=>`<div class="lb-row${c===sel.cls?' hl':''}"><span class="lb-rank">${medals[i]||i+1}</span><span class="lb-cls">Class ${c}</span><div class="lb-bar-w"><div class="lb-bar" style="width:${Math.round(leaderboard[c]/max*100)}%"></div></div><span class="lb-pts">${leaderboard[c]} pts</span></div>`).join('');}
+window.retry=function(){scores=[0,0,0,0];stage=0;goTo('s-activity');loadStage(0);};
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+
+loadFromFirebase();
+</script>
+</body>
+</html>
