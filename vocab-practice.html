@@ -1041,7 +1041,32 @@ window.chkSpell=()=>{const w=actState.pool[actState.qIdx];const clean=w.word.rep
 
 // Fill
 function initFill(words){actState={pool:words.slice(0,QS_FILL),allWords:LESSONS[sel.lesson],qIdx:0,score:0,total:QS_FILL,input:'',bu:null,feedback:null,bank:[],bg:-1};renderFill();}
-function renderFill(){const{pool,allWords,qIdx,score,input,bu,feedback,total}=actState;if(qIdx>=total){scores[2]=score;showCompletion();return;}const w=pool[qIdx];if(actState.bg!==qIdx){const d=shuffle(allWords.map(x=>x.word).filter(x=>x!==w.word)).slice(0,3);actState.bank=shuffle([w.word,...d]);actState.bg=qIdx;}const parts=w.sentence.split('____');setScore(`${score}/${total}`);document.getElementById('stageLbl').textContent=`Fill in Blank — ${qIdx+1} of ${total}`;ac().innerHTML=`<div style="text-align:center;font-size:14px;color:#aaa;margin-bottom:.5rem;font-weight:700">${w.emoji} ${w.zh}</div><div class="sent-box">${parts[0]}<input class="blank-in" id="fi" value="${input}" oninput="actState.input=this.value" onkeydown="if(event.key==='Enter')chkFill()" placeholder="type here" autocomplete="off">${parts[1]||''}</div><div class="wbank">${actState.bank.map((bw,i)=>`<div class="bword${bu===i?' used':''}" onclick="pBank(${i},'${bw.replace(/'/g,"\'")}')">${bw}</div>`).join('')}</div>${feedback?`<div class="fb ${feedback.ok?'ok':'bad'}">${feedback.msg}</div>`:''}<button class="btn btn-blue" onclick="chkFill()">Check Answer</button>`;if(!feedback)setTimeout(()=>{document.getElementById('fi')?.focus();},50);}
+function renderFill(){
+  const{pool,allWords,qIdx,score,input,bu,feedback,total}=actState;
+  if(qIdx>=total){scores[2]=score;showCompletion();return;}
+  const w=pool[qIdx];
+  if(actState.bg!==qIdx){
+    const d=shuffle(allWords.map(x=>x.word).filter(x=>x!==w.word)).slice(0,3);
+    actState.bank=shuffle([w.word,...d]);
+    actState.bg=qIdx;
+  }
+  const parts=w.sentence.split('____');
+  setScore(score+'/'+total);
+  document.getElementById('stageLbl').textContent='Fill in Blank — '+(qIdx+1)+' of '+total;
+  const blankText=input
+    ?'<span style="color:var(--blue);font-weight:800">'+input+'</span>'
+    :'<span style="color:#ccc">______</span>';
+  ac().innerHTML=
+    '<div style="text-align:center;font-size:14px;color:#aaa;margin-bottom:.5rem;font-weight:700">'+w.emoji+' '+w.zh+'</div>'
+    +'<div class="sent-box">'+parts[0]+blankText+(parts[1]||'')+'</div>'
+    +'<div style="font-size:13px;color:#888;text-align:center;margin-bottom:.75rem;font-weight:600">Tap a word to fill in the blank</div>'
+    +'<div class="wbank">'+actState.bank.map((bw,i)=>{
+      const escaped=bw.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      return '<div class="bword'+(bu===i?' used':'')+'" onclick="pBank('+i+',\''+escaped+'\')">'+bw+'</div>';
+    }).join('')+'</div>'
+    +(feedback?'<div class="fb '+(feedback.ok?'ok':'bad')+'">'+feedback.msg+'</div>':'')
+    +'<button class="btn btn-blue" onclick="chkFill()">Check Answer</button>';
+}
 window.pBank=(i,w)=>{actState.input=w;actState.bu=i;renderFill();};
 window.chkFill=()=>{if(actState.feedback)return;const w=actState.pool[actState.qIdx];const ok=actState.input.trim().toLowerCase()===w.word.toLowerCase();actState.feedback={ok,msg:ok?`✓ "${w.word}" — ${w.zh}`:`✗ Answer: "${w.word}" (${w.zh})`};if(ok){actState.score++;sOk();}else sBad();renderFill();setTimeout(()=>{actState.qIdx++;actState.input='';actState.bu=null;actState.feedback=null;renderFill();},1600);};
 
